@@ -1,0 +1,18 @@
+.button {
+  width: 100%;
+  background-color: var(--blue);
+  border-radius: 10px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  height: 48px;
+  border: none;
+
+  p {
+    background-color: var(--darken-blue);
+    color: transparent;
+    font-size: 1.5rem;
+    text-shadow: 0px 2px 3px var(--blue);
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    background-clip: text;
+  }
+}
