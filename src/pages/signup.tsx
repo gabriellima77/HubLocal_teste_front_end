@@ -1,17 +1,14 @@
-import type { NextPage } from 'next';
-
-import Head from 'next/head';
-import { Input } from '../components/Input';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { Button } from '../components/Button';
-
-import styles from '../styles/common.module.scss';
-import Link from 'next/link';
+import { yupResolver } from "@hookform/resolvers/yup";
+import Head from "next/head";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { Button } from "../components/Button";
+import { Input } from "../components/Input";
 import { api } from '../services/api';
+import styles from '../styles/common.module.scss';
 
 interface IFormData {
+  name: string;
   email: string;
   password: string;
 }
@@ -19,20 +16,21 @@ interface IFormData {
 const signInFormSchema = yup.object().shape({
   email: yup.string().required('E-mail obrigatório!').email('E-mail inválido!'),
   password: yup.string().required('Senha obrigatória!'),
+  name: yup.string().required('O nome é obrigatório!'),
 });
 
-const Home: NextPage = () => { 
+export default function Signup() {
   const { register, handleSubmit, formState: { errors } } = useForm<IFormData>({
     resolver: yupResolver(signInFormSchema),
   });
 
-  const onSubmit: SubmitHandler<IFormData> = async ({email, password}) => {
+  const onSubmit: SubmitHandler<IFormData> = async ({email, password, name}) => {
     try {
-      const { data } = await api.post("/users/login", {
+      const { data } = await api.post("/users/signup", {
         email,
-        password
+        password,
+        name
       });
-
       console.log(data);
     } catch(err: any) {
       const { error } = err.response.data
@@ -43,8 +41,7 @@ const Home: NextPage = () => {
   return (
     <div>
       <Head>
-        <title>Sign In</title>
-        <meta name="description" content="Solução do Teste da HubLocal" />
+        <title>SignUp</title>
       </Head>
       <form className={styles.container} onSubmit={handleSubmit(onSubmit)}>
         <h2>SignIn</h2>
@@ -61,15 +58,14 @@ const Home: NextPage = () => {
           type="password"
           {...register('password')}
         />
-        <Button>SignIn</Button>
-        <Link href="/signup">
-          <a>
-            Criar conta
-          </a>
-        </Link>
+        <Input
+          error={errors.name}
+          label="Nome"
+          type="text"
+          {...register('name')}
+        />
+        <Button>SignUp</Button>
       </form>
     </div>
   )
 }
-
-export default Home
