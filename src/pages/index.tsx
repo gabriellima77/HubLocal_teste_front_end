@@ -9,7 +9,9 @@ import { Button } from '../components/Button';
 
 import styles from '../styles/common.module.scss';
 import Link from 'next/link';
-import { api } from '../services/api';
+import { withSSRGuest } from '../utils/withSSRGuest';
+import { useContext } from 'react';
+import { AuthContext } from '../contexts/AuthContext';
 
 interface IFormData {
   email: string;
@@ -26,18 +28,10 @@ const Home: NextPage = () => {
     resolver: yupResolver(signInFormSchema),
   });
 
-  const onSubmit: SubmitHandler<IFormData> = async ({email, password}) => {
-    try {
-      const { data } = await api.post("/users/login", {
-        email,
-        password
-      });
+  const { signIn } = useContext(AuthContext);
 
-      console.log(data);
-    } catch(err: any) {
-      const { error } = err.response.data
-      console.log(error);
-    }
+  const onSubmit: SubmitHandler<IFormData> = async ({email, password}) => {
+    await signIn({ email, password });
   }
 
   return (
@@ -73,3 +67,9 @@ const Home: NextPage = () => {
 }
 
 export default Home
+
+export const getServerSideProps = withSSRGuest(async (ctx) => {
+  return {
+    props: {},
+  };
+});

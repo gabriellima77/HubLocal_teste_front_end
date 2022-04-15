@@ -4,8 +4,9 @@ import Head from "next/head";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button } from "../components/Button";
 import { Input } from "../components/Input";
-import { api } from '../services/api';
+import { api } from '../services/apiClient';
 import styles from '../styles/common.module.scss';
+import { withSSRGuest } from '../utils/withSSRGuest';
 
 interface IFormData {
   name: string;
@@ -13,7 +14,7 @@ interface IFormData {
   password: string;
 }
 
-const signInFormSchema = yup.object().shape({
+const signUpFormSchema = yup.object().shape({
   email: yup.string().required('E-mail obrigatório!').email('E-mail inválido!'),
   password: yup.string().required('Senha obrigatória!'),
   name: yup.string().required('O nome é obrigatório!'),
@@ -21,7 +22,7 @@ const signInFormSchema = yup.object().shape({
 
 export default function Signup() {
   const { register, handleSubmit, formState: { errors } } = useForm<IFormData>({
-    resolver: yupResolver(signInFormSchema),
+    resolver: yupResolver(signUpFormSchema),
   });
 
   const onSubmit: SubmitHandler<IFormData> = async ({email, password, name}) => {
@@ -69,3 +70,9 @@ export default function Signup() {
     </div>
   )
 }
+
+export const getServerSideProps = withSSRGuest(async (ctx) => {
+  return {
+    props: {},
+  };
+});
