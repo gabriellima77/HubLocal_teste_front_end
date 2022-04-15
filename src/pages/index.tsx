@@ -9,6 +9,8 @@ import { Button } from '../components/Button';
 
 import styles from './Signin.module.scss';
 import Link from 'next/link';
+import { api } from '../services/api';
+import { AxiosError } from 'axios';
 
 interface IFormData {
   email: string;
@@ -21,11 +23,23 @@ const signInFormSchema = yup.object().shape({
 });
 
 const Home: NextPage = () => { 
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<IFormData>({
+  const { register, handleSubmit, formState: { errors } } = useForm<IFormData>({
     resolver: yupResolver(signInFormSchema),
   });
 
-  const onSubmit: SubmitHandler<IFormData> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<IFormData> = async ({email, password}) => {
+    try {
+      const response = await api.post("/users/login", {
+        email,
+        password
+      });
+
+      console.log(response);
+    } catch(err: any) {
+      const { error } = err.response.data
+      console.log(error);
+    }
+  }
 
   return (
     <div>
