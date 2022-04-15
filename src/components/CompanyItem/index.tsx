@@ -1,3 +1,4 @@
+import Link from "next/link";
 
 interface CompanyItemProps {
   company: string;
@@ -7,9 +8,13 @@ interface CompanyItemProps {
 export function CompanyItem({company, id}: CompanyItemProps) {
   return (
   <li>
-    <p>{company}</p>
-    <button>Editar</button>
-    <button>Remover</button>
+    <Link href={`/${id}`}>
+      <a>
+        <p>{company}</p>
+        <button>Editar</button>
+        <button>Remover</button>
+      </a>
+    </Link>
   </li>
   );
 }

@@ -1,5 +1,6 @@
+import { GetStaticProps } from "next";
 import Head from "next/head";
-import { Header } from "../components/Header";
+import { Header } from "../../components/Header";
 
 export default function Empresas() {
   return (
@@ -15,4 +16,10 @@ export default function Empresas() {
       </form>
     </div>
   );
+}
+
+const getStaticProps: GetStaticProps = async () => {
+  return {
+    props: {}
+  }
 }
