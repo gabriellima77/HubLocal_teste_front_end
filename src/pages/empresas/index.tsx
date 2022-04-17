@@ -1,6 +1,7 @@
-import { GetStaticProps } from "next";
+import { GetServerSideProps, GetStaticProps } from "next";
 import Head from "next/head";
 import { Header } from "../../components/Header";
+import { withSSRAuth } from "../../utils/withSSRAuth";
 
 export default function Empresas() {
   return (
@@ -18,8 +19,9 @@ export default function Empresas() {
   );
 }
 
-const getStaticProps: GetStaticProps = async () => {
+export const getServerSideProps: GetServerSideProps = withSSRAuth (
+  async (context) => {
   return {
     props: {}
   }
-}
+});

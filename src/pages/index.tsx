@@ -32,7 +32,7 @@ const Home: NextPage = () => {
 
   const onSubmit: SubmitHandler<IFormData> = async ({email, password}) => {
     await signIn({ email, password });
-  }
+  } 
 
   return (
     <div>

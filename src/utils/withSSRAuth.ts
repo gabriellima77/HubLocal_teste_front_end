@@ -7,21 +7,14 @@ import {
 import { destroyCookie, parseCookies } from 'nookies';
 import { AuthTokenError } from '../services/errors/AuthTokenError';
 
-type withSSRAuthOptions = {
-  permissions: string[];
-  roles: string[];
-};
-
 export function withSSRAuth<P>(
   fn: GetServerSideProps<P>,
-  options?: withSSRAuthOptions
 ) {
   return async (
     context: GetServerSidePropsContext
   ): Promise<GetServerSidePropsResult<P>> => {
     const cookies = parseCookies(context);
     const token = cookies['nextauth.token'];
-
     if (!token) {
       return {
         redirect: {

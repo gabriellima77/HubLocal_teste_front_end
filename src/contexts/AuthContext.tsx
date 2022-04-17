@@ -2,10 +2,12 @@ import Router from 'next/router';
 import { createContext, ReactNode, useEffect, useState } from 'react';
 import { setCookie, parseCookies, destroyCookie } from 'nookies';
 import { api } from '../services/apiClient';
+import Signup from '../pages/signup';
 
 type User = {
   email: string;
   id: string;
+  name: string;
 };
 
 interface signInCredentials {
@@ -13,9 +15,16 @@ interface signInCredentials {
   password: string;
 }
 
+interface signUpCredentials {
+  email: string;
+  password: string;
+  name: string;
+}
+
 interface AuthContextData {
   signIn: (data: signInCredentials) => Promise<void>;
   signOut: () => void;
+  signUp: (data: signUpCredentials) => Promise<void>;
   user: User | undefined;
   isAuthenticated: boolean;
 }
@@ -55,45 +64,61 @@ export function AuthProvider({ children }: AuthProviderProps) {
     };
   }, []);
 
-  useEffect(() => {
-    const { 'nextauth.token': token } = parseCookies();
-    if (token) {
-      api
-        .get('/me')
-        .then(({ data }) => {
-          const { email, id } = data;
-          setUser({ email, id });
-        })
-        .catch(() => signOut());
-    }
-  }, []);
-
-  async function signIn({ email, password }: signInCredentials) {
+  async function signUp({email, password, name}: signUpCredentials) {
     try {
-      const { data } = await api.post('/users/login', {
+      const { data } = await api.post("/signup", {
         email,
         password,
+        name
       });
-      const { token, id } = data;
+
+      const {token, user} = data;
       setCookie(undefined, 'nextauth.token', token, {
         maxAge: 60 * 60 * 24 * 30, // 30 days
         path: '/',
       });
 
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+      setUser({
+        email: user.email,
+        id: user.id,
+        name: user.name,
+      });
+
+      if (authChannel) authChannel.postMessage('signIn');
+      Router.push('/empresas');
+    } catch(error) {
+      console.log(error);
+    }
+  }
+
+  async function signIn({ email, password }: signInCredentials) {
+    try {
+      const { data } = await api.post('/login', {
+        email,
+        password,
+      });
+      const { token, user } = data;
+      setCookie(undefined, 'nextauth.token', token, {
+        maxAge: 60 * 60 * 24 * 30, // 30 days
+        path: '/',
+      });
+      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       setUser({
         email,
-        id,
+        id: user.id,
+        name: user.name,
       });
       if (authChannel) authChannel.postMessage('signIn');
-      Router.push('/dashboard');
-    } catch (err) {
-      console.log(err);
+      Router.push('/empresas');
+    } catch (error) {
+      console.log(error);
     }
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, signIn, user, signOut }}>
+    <AuthContext.Provider value={{ isAuthenticated, signIn, user, signOut, signUp }}>
       {children}
     </AuthContext.Provider>
   );

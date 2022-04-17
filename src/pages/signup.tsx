@@ -7,6 +7,8 @@ import { Input } from "../components/Input";
 import { api } from '../services/apiClient';
 import styles from '../styles/common.module.scss';
 import { withSSRGuest } from '../utils/withSSRGuest';
+import { useContext } from 'react';
+import { AuthContext } from '../contexts/AuthContext';
 
 interface IFormData {
   name: string;
@@ -25,14 +27,11 @@ export default function Signup() {
     resolver: yupResolver(signUpFormSchema),
   });
 
+  const {signUp} = useContext(AuthContext);
+
   const onSubmit: SubmitHandler<IFormData> = async ({email, password, name}) => {
     try {
-      const { data } = await api.post("/users/signup", {
-        email,
-        password,
-        name
-      });
-      console.log(data);
+      await signUp({email, name, password});
     } catch(err: any) {
       const { error } = err.response.data
       console.log(error);

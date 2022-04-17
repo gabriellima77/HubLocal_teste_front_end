@@ -11,7 +11,7 @@ export function setupAPIClient(ctx: ctxType = undefined) {
   let cookies = parseCookies(ctx);
 
   const api = axios.create({
-    baseURL: 'http://localhost:3333/api',
+    baseURL: 'http://localhost:3333',
   });
 
   api.defaults.headers.common[

@@ -10,8 +10,8 @@ export function withSSRGuest<P>(fn: GetServerSideProps<P>) {
     context: GetServerSidePropsContext
   ): Promise<GetServerSidePropsResult<P>> => {
     const cookies = parseCookies(context);
-
-    if (cookies['nextauth.token']) {
+    const token = cookies['nextauth.token'];
+    if (token) {
       return {
         redirect: {
           destination: '/empresas',
