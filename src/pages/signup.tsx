@@ -4,8 +4,11 @@ import Head from "next/head";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button } from "../components/Button";
 import { Input } from "../components/Input";
-import { api } from '../services/api';
+import { api } from '../services/apiClient';
 import styles from '../styles/common.module.scss';
+import { withSSRGuest } from '../utils/withSSRGuest';
+import { useContext } from 'react';
+import { AuthContext } from '../contexts/AuthContext';
 
 interface IFormData {
   name: string;
@@ -13,7 +16,7 @@ interface IFormData {
   password: string;
 }
 
-const signInFormSchema = yup.object().shape({
+const signUpFormSchema = yup.object().shape({
   email: yup.string().required('E-mail obrigatório!').email('E-mail inválido!'),
   password: yup.string().required('Senha obrigatória!'),
   name: yup.string().required('O nome é obrigatório!'),
@@ -21,17 +24,14 @@ const signInFormSchema = yup.object().shape({
 
 export default function Signup() {
   const { register, handleSubmit, formState: { errors } } = useForm<IFormData>({
-    resolver: yupResolver(signInFormSchema),
+    resolver: yupResolver(signUpFormSchema),
   });
+
+  const {signUp} = useContext(AuthContext);
 
   const onSubmit: SubmitHandler<IFormData> = async ({email, password, name}) => {
     try {
-      const { data } = await api.post("/users/signup", {
-        email,
-        password,
-        name
-      });
-      console.log(data);
+      await signUp({email, name, password});
     } catch(err: any) {
       const { error } = err.response.data
       console.log(error);
@@ -69,3 +69,9 @@ export default function Signup() {
     </div>
   )
 }
+
+export const getServerSideProps = withSSRGuest(async (ctx) => {
+  return {
+    props: {},
+  };
+});
