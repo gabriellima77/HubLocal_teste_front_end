@@ -29,15 +29,11 @@ export function CreateCompanyModal({
   isOpen,
   onRequestClose,
 }: CreateCompanyModalProps) {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<IFormData>({
+  const { register, handleSubmit, formState, reset } = useForm<IFormData>({
     resolver: yupResolver(createCompanySchema),
   });
 
-  const [isCreating, setIsCreating] = useState(false);
+  const { errors, isSubmitting } = formState;
 
   const onSubmit: SubmitHandler<IFormData> = async ({
     name,
@@ -45,12 +41,9 @@ export function CreateCompanyModal({
     cnpj,
   }) => {
     try {
-      await setIsCreating(true);
       await api.post("/empresas", { name, description, cnpj });
-      await setIsCreating(false);
-      setInterval(() => {
-        onRequestClose();
-      }, 200);
+      reset();
+      onRequestClose();
     } catch (error) {
       console.log(error);
     }
@@ -89,7 +82,7 @@ export function CreateCompanyModal({
           {...register("description")}
         />
 
-        <button type="submit">{!isCreating ? "Criar" : "Criando"}</button>
+        <button type="submit">{!isSubmitting ? "Criar" : "Criando"}</button>
       </form>
     </Modal>
   );
