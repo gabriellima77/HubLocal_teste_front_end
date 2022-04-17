@@ -26,6 +26,8 @@
     "prettier"
   ],
   "rules": {
+    "react/require-default-props": "off",
+    "react/jsx-props-no-spreading": "off",
     "react/jsx-filename-extension": [1, { "extensions": [".jsx", ".tsx"] }],
     "prettier/prettier": "error",
     "camelcase": "off",

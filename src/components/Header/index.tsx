@@ -4,7 +4,7 @@ import { AuthContext } from "../../contexts/AuthContext";
 import styles from "./Header.module.scss";
 
 interface HeaderProps {
-  name: string;
+  name?: string;
 }
 
 export function Header({ name }: HeaderProps) {

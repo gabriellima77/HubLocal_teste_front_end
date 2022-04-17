@@ -5,16 +5,16 @@ interface CompanyItemProps {
   id: string;
 }
 
-export function CompanyItem({company, id}: CompanyItemProps) {
+export function CompanyItem({ company, id }: CompanyItemProps) {
   return (
-  <li>
-    <Link href={`empresas/${id}`}>
-      <a>
-        <p>{company}</p>
-        <button>Editar</button>
-        <button>Remover</button>
-      </a>
-    </Link>
-  </li>
+    <li>
+      <Link href={`empresas/${id}`} passHref>
+        <a href="replace">
+          <p>{company}</p>
+          <button type="button">Editar</button>
+          <button type="button">Remover</button>
+        </a>
+      </Link>
+    </li>
   );
 }
