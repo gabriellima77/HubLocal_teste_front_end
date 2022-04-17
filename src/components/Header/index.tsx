@@ -13,7 +13,7 @@ export function Header({ name }: HeaderProps) {
     <header className={styles.header}>
       <div>Logo</div>
       <p>{name}</p>
-      <button type="button" onClick={() => signOut()}>
+      <button className={styles.button} type="button" onClick={() => signOut()}>
         Logout
       </button>
     </header>

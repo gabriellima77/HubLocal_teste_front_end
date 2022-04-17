@@ -15,12 +15,12 @@
   .input {
     border-radius: 5px;
     border: none;
-    background: var(--green-tranparent);
+    background: var(--green-transparent);
     padding-left: 10px;
-    height: 3rem;
+    height: 2.5rem;
     width: 100%;
     color: var(--blue);
-    font-size: 1.5rem;
+    font-size: 1.1rem;
 
     &::placeholder {
       color: var(--blue);

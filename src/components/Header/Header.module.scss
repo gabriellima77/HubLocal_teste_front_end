@@ -3,9 +3,25 @@
   align-items: center;
   height: 4rem;
   max-width: 1240px;
-  box-shadow: 1px solid rgba(0,0,0,0.4);
+  box-shadow: 1px 0 5px 1px rgba(0, 0, 0, 0.4);
+  padding: 0 3rem;
+  margin-bottom: 2rem;
 
   p {
-    margin: 0 20px 0 auto;
+    margin: 0 3rem 0 auto;
+  }
+
+  .button {
+    background-color: var(--green);
+    color: white;
+    border: none;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 2px;
+    transition: 0.25s;
+
+    &:hover {
+      background-color: var(--green-500);
+    }
   }
 }

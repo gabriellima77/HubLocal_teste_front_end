@@ -1,5 +1,6 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import Head from "next/head";
+import Link from "next/link";
 import { useContext } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -51,7 +52,7 @@ export default function Signup() {
   };
 
   return (
-    <div>
+    <div className={styles.wrapper}>
       <Head>
         <title>SignUp</title>
       </Head>
@@ -83,6 +84,9 @@ export default function Signup() {
           {...register("name")}
         />
         <Button>SignUp</Button>
+        <Link href="/" passHref>
+          <a href="replace">Login</a>
+        </Link>
       </form>
     </div>
   );
