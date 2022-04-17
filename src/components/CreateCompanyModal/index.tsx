@@ -11,6 +11,7 @@ import styles from "./CreateCompanyModal.module.scss";
 interface CreateCompanyModalProps {
   isOpen: boolean;
   onRequestClose(): void;
+  onAddCompany(companies: any): void;
 }
 
 interface IFormData {
@@ -28,6 +29,7 @@ const createCompanySchema = yup.object().shape({
 export function CreateCompanyModal({
   isOpen,
   onRequestClose,
+  onAddCompany,
 }: CreateCompanyModalProps) {
   const { register, handleSubmit, formState, reset } = useForm<IFormData>({
     resolver: yupResolver(createCompanySchema),
@@ -42,6 +44,8 @@ export function CreateCompanyModal({
   }) => {
     try {
       await api.post("/empresas", { name, description, cnpj });
+      const { data: newCompanies } = await api.get("/empresas");
+      onAddCompany(newCompanies);
       reset();
       onRequestClose();
     } catch (error) {

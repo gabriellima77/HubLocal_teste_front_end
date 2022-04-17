@@ -8,7 +8,7 @@ interface CompanyItemProps {
 export function CompanyItem({ company, id }: CompanyItemProps) {
   return (
     <li>
-      <Link href={`empresas/${id}`} passHref>
+      <Link href={`/empresas/${id}`} passHref>
         <a href="replace">
           <p>{company}</p>
           <button type="button">Editar</button>
