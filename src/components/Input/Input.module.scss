@@ -25,6 +25,10 @@
     &::placeholder {
       color: var(--blue);
     }
+
+    &:disabled {
+      background-color: var(--disabled-green);
+    }
   }
 
   .error {
