@@ -58,6 +58,7 @@ export function CreateCompanyModal({
       className={styles.modal}
       isOpen={isOpen}
       onRequestClose={onRequestClose}
+      style={{ overlay: { backgroundColor: "rgba(0, 0, 0, 0.4)" } }}
     >
       <button
         className={styles.closeBtn}

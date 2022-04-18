@@ -42,6 +42,11 @@ export default function Empresas({ companies }: EmpresasProps) {
     setCompaniesList(newCompanies);
   };
 
+  const removeCompany = (id: string) => {
+    const newCompanies = companiesList.filter((company) => company.id !== id);
+    setCompaniesList(newCompanies);
+  };
+
   return (
     <div>
       <Head>
@@ -57,12 +62,13 @@ export default function Empresas({ companies }: EmpresasProps) {
           onRequestClose={closeModal}
           onAddCompany={addCompany}
         />
-        <ul>
+        <ul className={styles.list}>
           {companiesList.map((company) => (
             <CompanyItem
               key={company.id}
               company={company.name}
               id={company.id}
+              removeCompany={removeCompany}
             />
           ))}
         </ul>
