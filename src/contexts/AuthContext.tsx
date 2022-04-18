@@ -1,8 +1,8 @@
-import Router from 'next/router';
-import { createContext, ReactNode, useEffect, useState } from 'react';
-import { setCookie, parseCookies, destroyCookie } from 'nookies';
-import { api } from '../services/apiClient';
-import Signup from '../pages/signup';
+import Router from "next/router";
+import { setCookie, parseCookies, destroyCookie } from "nookies";
+import { createContext, ReactNode, useEffect, useMemo, useState } from "react";
+
+import { api } from "../services/apiClient";
 
 type User = {
   email: string;
@@ -38,9 +38,9 @@ interface AuthProviderProps {
 let authChannel: BroadcastChannel;
 
 export function signOut(sendMessage = true) {
-  destroyCookie(undefined, 'nextauth.token');
-  if (sendMessage) authChannel.postMessage('signOut');
-  Router.push('/');
+  destroyCookie(undefined, "nextauth.token");
+  if (sendMessage) authChannel.postMessage("signOut");
+  Router.push("/");
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
@@ -48,15 +48,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const isAuthenticated = !!user;
 
   useEffect(() => {
-    authChannel = new BroadcastChannel('auth');
+    authChannel = new BroadcastChannel("auth");
 
     authChannel.onmessage = (message) => {
       switch (message.data) {
-        case 'signOut':
+        case "signOut":
           signOut(false);
           break;
-        case 'signIn':
-          Router.push('/empresas');
+        case "signIn":
+          Router.push("/empresas");
           break;
         default:
           break;
@@ -64,21 +64,34 @@ export function AuthProvider({ children }: AuthProviderProps) {
     };
   }, []);
 
-  async function signUp({email, password, name}: signUpCredentials) {
+  useEffect(() => {
+    const { "nextauth.token": token } = parseCookies();
+    if (token) {
+      api
+        .post("/getUserByToken", { token })
+        .then(({ data }) => {
+          const { email, id, name } = data;
+          setUser({ email, id, name });
+        })
+        .catch(() => signOut());
+    }
+  }, []);
+
+  async function signUp({ email, password, name }: signUpCredentials) {
     try {
       const { data } = await api.post("/signup", {
         email,
         password,
-        name
+        name,
       });
 
-      const {token, user} = data;
-      setCookie(undefined, 'nextauth.token', token, {
+      const { token, user } = data;
+      setCookie(undefined, "nextauth.token", token, {
         maxAge: 60 * 60 * 24 * 30, // 30 days
-        path: '/',
+        path: "/",
       });
 
-      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      api.defaults.headers.common.Authorization = `Bearer ${token}`;
 
       setUser({
         email: user.email,
@@ -86,40 +99,41 @@ export function AuthProvider({ children }: AuthProviderProps) {
         name: user.name,
       });
 
-      if (authChannel) authChannel.postMessage('signIn');
-      Router.push('/empresas');
-    } catch(error) {
+      if (authChannel) authChannel.postMessage("signIn");
+      Router.push("/empresas");
+    } catch (error) {
       console.log(error);
     }
   }
 
   async function signIn({ email, password }: signInCredentials) {
     try {
-      const { data } = await api.post('/login', {
+      const { data } = await api.post("/login", {
         email,
         password,
       });
       const { token, user } = data;
-      setCookie(undefined, 'nextauth.token', token, {
+      setCookie(undefined, "nextauth.token", token, {
         maxAge: 60 * 60 * 24 * 30, // 30 days
-        path: '/',
+        path: "/",
       });
-      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      api.defaults.headers.common.Authorization = `Bearer ${token}`;
       setUser({
         email,
         id: user.id,
         name: user.name,
       });
-      if (authChannel) authChannel.postMessage('signIn');
-      Router.push('/empresas');
+      if (authChannel) authChannel.postMessage("signIn");
+      Router.push("/empresas");
     } catch (error) {
       console.log(error);
     }
   }
 
-  return (
-    <AuthContext.Provider value={{ isAuthenticated, signIn, user, signOut, signUp }}>
-      {children}
-    </AuthContext.Provider>
+  const value = useMemo(
+    () => ({ isAuthenticated, signIn, user, signOut, signUp }),
+    [user]
   );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

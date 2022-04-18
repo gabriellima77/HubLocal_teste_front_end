@@ -1,17 +1,16 @@
-import type { NextPage } from 'next';
+import { yupResolver } from "@hookform/resolvers/yup";
+import type { NextPage } from "next";
+import Head from "next/head";
+import Link from "next/link";
+import { useContext } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import * as yup from "yup";
 
-import Head from 'next/head';
-import { Input } from '../components/Input';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
-import { Button } from '../components/Button';
-
-import styles from '../styles/common.module.scss';
-import Link from 'next/link';
-import { withSSRGuest } from '../utils/withSSRGuest';
-import { useContext } from 'react';
-import { AuthContext } from '../contexts/AuthContext';
+import { Button } from "../components/Button";
+import { Input } from "../components/Input";
+import { AuthContext } from "../contexts/AuthContext";
+import styles from "../styles/common.module.scss";
+import { withSSRGuest } from "../utils/withSSRGuest";
 
 interface IFormData {
   email: string;
@@ -19,23 +18,27 @@ interface IFormData {
 }
 
 const signInFormSchema = yup.object().shape({
-  email: yup.string().required('E-mail obrigatório!').email('E-mail inválido!'),
-  password: yup.string().required('Senha obrigatória!'),
+  email: yup.string().required("E-mail obrigatório!").email("E-mail inválido!"),
+  password: yup.string().required("Senha obrigatória!"),
 });
 
-const Home: NextPage = () => { 
-  const { register, handleSubmit, formState: { errors } } = useForm<IFormData>({
+const Home: NextPage = function () {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IFormData>({
     resolver: yupResolver(signInFormSchema),
   });
 
   const { signIn } = useContext(AuthContext);
 
-  const onSubmit: SubmitHandler<IFormData> = async ({email, password}) => {
+  const onSubmit: SubmitHandler<IFormData> = async ({ email, password }) => {
     await signIn({ email, password });
-  } 
+  };
 
   return (
-    <div>
+    <div className={styles.wrapper}>
       <Head>
         <title>Sign In</title>
         <meta name="description" content="Solução do Teste da HubLocal" />
@@ -47,26 +50,24 @@ const Home: NextPage = () => {
           label="E-mail"
           type="email"
           placeholder="seu@email.com"
-          {...register('email')}
+          {...register("email")}
         />
         <Input
           error={errors.password}
           label="Senha"
           type="password"
-          {...register('password')}
+          {...register("password")}
         />
         <Button>SignIn</Button>
-        <Link href="/signup">
-          <a>
-            Criar conta
-          </a>
+        <Link href="/signup" passHref>
+          <a href="replace">Criar conta</a>
         </Link>
       </form>
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;
 
 export const getServerSideProps = withSSRGuest(async (ctx) => {
   return {

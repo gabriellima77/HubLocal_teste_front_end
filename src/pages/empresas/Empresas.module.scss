@@ -1,0 +1,37 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .createBtn {
+    border: 1px solid var(--blue);
+    background: none;
+    color: var(--darken-blue);
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 2px;
+    transition: 0.25s;
+
+    &:hover {
+      background-color: var(--green-transparent);
+    }
+  }
+
+  .list {
+    margin-top: 2rem;
+    width: 80%;
+    max-width: 720px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    list-style: none;
+
+    & li:nth-child(even) {
+      background-color: #0283fcea;
+    }
+
+    & li:nth-child(odd) {
+      background-color: #0283fc81;
+    }
+  }
+}
