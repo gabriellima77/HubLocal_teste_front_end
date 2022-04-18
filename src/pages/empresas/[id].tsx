@@ -1,20 +1,39 @@
-import { GetStaticPaths, GetStaticProps } from "next";
+import { GetServerSideProps } from "next";
 
-export default function Empresa() {
+import { Header } from "../../components/Header";
+import { setupAPIClient } from "../../services/api";
+import { withSSRAuth } from "../../utils/withSSRAuth";
 
+interface EmpresaProps {
+  company: {
+    id: string;
+    name: string;
+    description: string;
+    cnpj: string;
+    user: string;
+  };
 }
 
-export const getStaticPaths: GetStaticPaths = async ()=> {
-  return {
-    paths: [],
-    fallback: false,
+export default function Empresa({ company }: EmpresaProps) {
+  return (
+    <>
+      <Header name="Testando" hasNavLink />
+      <main>
+        <h1>{company.name}</h1>
+      </main>
+    </>
+  );
+}
+
+export const getServerSideProps: GetServerSideProps = withSSRAuth(
+  async (context) => {
+    const { id } = context.params ? context.params : { id: "" };
+    const api = setupAPIClient(context);
+    const { data: company } = await api.get(`/empresas/${id}`);
+    return {
+      props: {
+        company,
+      },
+    };
   }
-}
-
-export const getStaticProps: GetStaticProps = async (context)=> {
-  // const { id } = context.params;
-  // const response = api.get();
-  return {
-    props: {}
-  }
-}
+);
