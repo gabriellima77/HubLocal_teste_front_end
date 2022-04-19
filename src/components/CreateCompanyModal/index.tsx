@@ -91,6 +91,8 @@ export function CreateCompanyModal({
   }: IFormData) => {
     try {
       await api.post("/empresas", { name, description, cnpj });
+      const { data: newCompanies } = await api.get("/empresas");
+      const company = newCompanies[newCompanies.length - 1];
       const promises = [];
       for (let i = 0; i < locations.length; i += 1) {
         const location = {
@@ -99,9 +101,12 @@ export function CreateCompanyModal({
           city: locations[i].city,
           state: locations[i].state,
         };
-        promises.push(api.post("/locais", location, {}));
+        promises.push(
+          api.post("/locais", location, { headers: { company_id: company.id } })
+        );
       }
-      const { data: newCompanies } = await api.get("/empresas");
+      await Promise.all(promises);
+
       onAddCompany(newCompanies);
       reset();
       onRequestClose();
