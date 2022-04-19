@@ -1,37 +1,65 @@
+import { useState } from "react";
+import { useFieldArray, useFormContext } from "react-hook-form";
+
+import common from "../../styles/common.module.scss";
+import { CepInput } from "../CepInput";
 import { Input } from "../Input";
+import { ResponsibleForm } from "../ResponsibleForm";
 import styles from "./LocationsForm.module.scss";
 
-export function LocaionsForm({ errors, register, index }) {
+interface AddresRequest {
+  address: string;
+  city: string;
+  state: string;
+}
+
+interface LocationsFormProps {
+  index: number;
+  removeLocation(): void;
+}
+
+export function LocationsForm({ removeLocation, index }: LocationsFormProps) {
+  const { register, formState, setValue, clearErrors, getValues, control } =
+    useFormContext();
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: `locations.${index}.responsible`,
+  });
+
+  const setAddress = ({ address, city, state }: AddresRequest) => {
+    const values = getValues(`locations.${index}`);
+    setValue(`locations.${index}`, { ...values, address, city, state });
+    clearErrors(`locations.${index}.address`);
+    clearErrors(`locations.${index}.city`);
+    clearErrors(`locations.${index}.state`);
+  };
+
+  const addResponsible = () => {
+    append({
+      name: "",
+      phone: "",
+      address: "",
+      city: "",
+      state: "",
+    });
+  };
+
+  const removeResponsible = (index: number) => {
+    remove(index);
+  };
+
+  const { errors } = formState;
+
   return (
-    <form className={styles["location-container"]}>
-      <legend>{`Local ${index + 1}`}</legend>
+    <div className={styles.container}>
       <Input
         label="Nome do Local"
         type="text"
-        error={errors.locations ? errors.locations[index]?.name : undefined}
+        error={errors.locations ? errors.locations[index].name : undefined}
         {...register(`locations.${index}.name`)}
       />
-      <Input
-        label="Responsável"
-        type="text"
-        error={
-          errors.locations ? errors.locations[index].responsible : undefined
-        }
-        {...register(`locations.${index}.responsible`)}
-      />
-      <Input
-        label="CEP"
-        type="text"
-        error={errors.locations ? errors.locations[index].cep : undefined}
-        {...register(`locations.${index}.cep`)}
-      />
-      <button
-        className={common.button}
-        onClick={() => verifyCEP(index)}
-        type="button"
-      >
-        Verificar CEP
-      </button>
+      <CepInput setAddress={setAddress} />
       <Input
         label="Endereço"
         type="text"
@@ -53,13 +81,20 @@ export function LocaionsForm({ errors, register, index }) {
         {...register(`locations.${index}.state`)}
         disabled
       />
-      <button
-        className={common.button}
-        type="button"
-        onClick={() => removeLocation(index)}
-      >
-        Remover
+
+      <button type="button" onClick={addResponsible}>
+        Criar Responsável
       </button>
-    </form>
+      {fields.map((field, i) => (
+        <ResponsibleForm key={field.id} index={i} locationIndex={index} />
+      ))}
+      <button
+        className={`${common.button} ${styles.buttonRed}`}
+        type="button"
+        onClick={removeLocation}
+      >
+        Remover Local
+      </button>
+    </div>
   );
 }

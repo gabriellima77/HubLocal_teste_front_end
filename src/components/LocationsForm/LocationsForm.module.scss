@@ -1,4 +1,4 @@
-.location-container {
+.container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -10,5 +10,9 @@
   
   & + & {
     margin-top: 2rem;
+  }
+
+  .buttonRed {
+    background-color: rgb(252, 80, 80);
   }
 }
