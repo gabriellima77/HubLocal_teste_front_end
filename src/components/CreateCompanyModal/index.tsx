@@ -38,6 +38,14 @@ interface IFormData {
   locations: Location[];
 }
 
+interface CreateResponsibleProps {
+  responsible: Responsible[];
+  ids: {
+    company_id: string;
+    location_id: string;
+  };
+}
+
 const phoneRegex = /\({0,1}\d{2,}\){0,1}\d{4,}-{0,1}\d{4}/g;
 export const responsibleSchema = yup.object().shape({
   name: yup.string().required("Nome obrigatório!"),
@@ -83,6 +91,57 @@ export function CreateCompanyModal({
 
   const { errors, isSubmitting } = formState;
 
+  const createResponsible = async ({
+    ids,
+    responsible,
+  }: CreateResponsibleProps): Promise<void> => {
+    const promises = [];
+    for (let i = 0; i < responsible.length; i += 1) {
+      const newResponsible = {
+        name: responsible[i].name,
+        phone: responsible[i].phone,
+        address: responsible[i].address,
+        city: responsible[i].city,
+        state: responsible[i].state,
+        isMain: false,
+      };
+      promises.push(
+        api.post("/responsaveis", newResponsible, { headers: ids })
+      );
+    }
+    await Promise.all(promises);
+  };
+
+  const createLocations = async (
+    locations: Location[],
+    company_id: string
+  ): Promise<void> => {
+    const promises = [];
+    for (let i = 0; i < locations.length; i += 1) {
+      const location = {
+        name: locations[i].name,
+        address: locations[i].address,
+        city: locations[i].city,
+        state: locations[i].state,
+      };
+      const promise = api
+        .post("/locais", location, { headers: { company_id } })
+        .then(({ data }) => {
+          const { id } = data;
+          const responsible = {
+            responsible: locations[i].responsible,
+            ids: {
+              company_id,
+              location_id: id,
+            },
+          };
+          return createResponsible(responsible);
+        });
+      promises.push(promise);
+    }
+    await Promise.all(promises);
+  };
+
   const onSubmit = async ({
     cnpj,
     description,
@@ -93,20 +152,7 @@ export function CreateCompanyModal({
       await api.post("/empresas", { name, description, cnpj });
       const { data: newCompanies } = await api.get("/empresas");
       const company = newCompanies[newCompanies.length - 1];
-      const promises = [];
-      for (let i = 0; i < locations.length; i += 1) {
-        const location = {
-          name: locations[i].name,
-          address: locations[i].address,
-          city: locations[i].city,
-          state: locations[i].state,
-        };
-        promises.push(
-          api.post("/locais", location, { headers: { company_id: company.id } })
-        );
-      }
-      await Promise.all(promises);
-
+      await createLocations(locations, company.id);
       onAddCompany(newCompanies);
       reset();
       onRequestClose();
