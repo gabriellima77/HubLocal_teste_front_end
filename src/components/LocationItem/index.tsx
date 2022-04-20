@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { FiEdit2, FiTrash } from "react-icons/fi";
 
 import { api } from "../../services/apiClient";
@@ -29,11 +30,15 @@ function LocationItem({
 
   return (
     <li className={styles.item}>
-      <p>{location}</p>
-      <FiEdit2 className={styles.edit} width={18} />
-      <button onClick={removeEvent} type="button">
-        <FiTrash width={18} color="white" />
-      </button>
+      <Link href={`/locais/${id}`} passHref>
+        <a href="pass">
+          <p>{location}</p>
+          <FiEdit2 className={styles.edit} width={18} />
+          <button onClick={removeEvent} type="button">
+            <FiTrash width={18} color="white" />
+          </button>
+        </a>
+      </Link>
     </li>
   );
 }

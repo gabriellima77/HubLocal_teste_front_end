@@ -2,7 +2,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import Router from "next/router";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import * as yup from "yup";
 
@@ -14,6 +14,7 @@ import { AuthContext } from "../../../contexts/AuthContext";
 import { setupAPIClient } from "../../../services/api";
 import { api } from "../../../services/apiClient";
 import common from "../../../styles/common.module.scss";
+import { setCompany } from "../../../utils/CompanyCookies";
 import { withSSRAuth } from "../../../utils/withSSRAuth";
 import styles from "./Empresa.module.scss";
 
@@ -58,6 +59,10 @@ export default function Empresa({ company, locations }: EmpresaProps) {
       description: company.description,
     },
   });
+
+  useEffect(() => {
+    setCompany(company.id);
+  }, []);
 
   const openModal = () => {
     setIsCreateLocationModalOpen(true);

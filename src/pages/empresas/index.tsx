@@ -8,6 +8,7 @@ import { CreateCompanyModal } from "../../components/CreateCompanyModal";
 import { Header } from "../../components/Header";
 import { AuthContext } from "../../contexts/AuthContext";
 import { setupAPIClient } from "../../services/api";
+import { removeCompanyCookies } from "../../utils/CompanyCookies";
 import { withSSRAuth } from "../../utils/withSSRAuth";
 import styles from "./Empresas.module.scss";
 
@@ -79,6 +80,7 @@ export default function Empresas({ companies }: EmpresasProps) {
 
 export const getServerSideProps: GetServerSideProps = withSSRAuth(
   async (context) => {
+    removeCompanyCookies(context);
     const api = setupAPIClient(context);
     const { data: companies } = await api.get("/empresas");
 
