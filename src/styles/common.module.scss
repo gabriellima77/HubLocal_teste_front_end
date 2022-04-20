@@ -34,3 +34,13 @@
     }
   }
 }
+
+.button {
+  padding: 0.5rem 2rem;
+  border: none;
+  background-color: var(--blue);
+  color: white;
+  border-radius: 2.5px;
+  font-weight: bold;
+  margin: 1rem 0;
+}
