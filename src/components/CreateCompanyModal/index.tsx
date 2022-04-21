@@ -1,5 +1,10 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useForm, useFieldArray, FormProvider } from "react-hook-form";
+import {
+  useForm,
+  useFieldArray,
+  FormProvider,
+  SubmitHandler,
+} from "react-hook-form";
 import Modal from "react-modal";
 import * as yup from "yup";
 
@@ -136,23 +141,23 @@ export function CreateCompanyModal({
             },
           };
           return createResponsible(responsible);
-        });
+        })
+        .catch((error) => error);
       promises.push(promise);
     }
     await Promise.all(promises);
   };
 
-  const onSubmit = async ({
+  const onSubmit: SubmitHandler<IFormData> = async ({
     cnpj,
     description,
     locations,
     name,
-  }: IFormData) => {
+  }) => {
     try {
-      await api.post("/empresas", { name, description, cnpj });
+      const { data } = await api.post("/empresas", { name, description, cnpj });
       const { data: newCompanies } = await api.get("/empresas");
-      const company = newCompanies[newCompanies.length - 1];
-      await createLocations(locations, company.id);
+      await createLocations(locations, data.id);
       onAddCompany(newCompanies);
       reset();
       onRequestClose();
@@ -220,15 +225,11 @@ export function CreateCompanyModal({
           >
             Adicionar Local
           </button>
-        </form>
 
-        <button
-          className={common.button}
-          type="submit"
-          onClick={handleSubmit(onSubmit)}
-        >
-          {!isSubmitting ? "Criar" : "Criando"}
-        </button>
+          <button className={common.button} type="submit">
+            {!isSubmitting ? "Criar" : "Criando..."}
+          </button>
+        </form>
       </Modal>
     </FormProvider>
   );

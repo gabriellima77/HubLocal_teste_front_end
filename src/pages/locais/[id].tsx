@@ -2,7 +2,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import { useContext, useState } from "react";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import ReactModal from "react-modal";
 import * as yup from "yup";
 
@@ -157,6 +157,33 @@ export default function Location({
     onModalOpen();
   };
 
+  const onSubmit: SubmitHandler<IFormData> = async (data) => {
+    try {
+      await api.put(`/locais/${location.id}`, data, {
+        headers: {
+          company_id: companyId,
+        },
+      });
+
+      // update last Ticket or Create new Ticket
+      await api.post(
+        "/tickets",
+        {
+          created_by: user?.name,
+          will_solve: user?.name,
+        },
+        {
+          headers: {
+            company_id: companyId,
+            location_id: location.id,
+          },
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       <Head>
@@ -174,7 +201,10 @@ export default function Location({
       />
       <main className={styles.container}>
         <h3 className={styles["location-header"]}>Editar {location.name}</h3>
-        <form className={styles["form-container"]}>
+        <form
+          className={styles["form-container"]}
+          onSubmit={handleSubmit(onSubmit)}
+        >
           <Input
             label="Nome do Local"
             type="text"

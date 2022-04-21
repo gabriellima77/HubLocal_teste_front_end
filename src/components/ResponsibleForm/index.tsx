@@ -25,9 +25,10 @@ export function ResponsibleForm({
     useFormContext();
 
   const { errors } = formState;
-  const position = locationIndex
-    ? `locations.${locationIndex}.responsible.`
-    : "responsible.";
+  const position =
+    locationIndex !== undefined
+      ? `locations.${locationIndex}.responsible.`
+      : "responsible.";
 
   const setAddress = ({ address, city, state }: AddressRequest) => {
     const values = getValues(`${position}${index}`);
@@ -43,14 +44,14 @@ export function ResponsibleForm({
   };
 
   let { responsible } = errors;
-  if (locationIndex) {
+  if (locationIndex !== undefined) {
     responsible = errors.locations
-      ? errors.locations[locationIndex]
-      : { responsible: undefined };
+      ? errors.locations[locationIndex].responsible
+      : undefined;
   }
 
   return (
-    <div>
+    <>
       <Input
         label="Nome do responsável"
         type="text"
@@ -85,6 +86,6 @@ export function ResponsibleForm({
         {...register(`${position}${index}.state`)}
         disabled
       />
-    </div>
+    </>
   );
 }
