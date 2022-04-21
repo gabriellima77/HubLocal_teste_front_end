@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 
 import common from "../../styles/common.module.scss";

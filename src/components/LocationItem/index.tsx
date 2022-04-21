@@ -4,13 +4,30 @@ import { FiEdit2, FiTrash } from "react-icons/fi";
 import { api } from "../../services/apiClient";
 import styles from "../../styles/common.module.scss";
 
-interface CompanyItemProps {
-  company: string;
+interface LocationItemProps {
+  location: string;
+  company_id: string;
   id: string;
-  removeCompany(id: string): void;
+  onRemoveLocation(id: string): void;
 }
 
-export function CompanyItem({ company, id, removeCompany }: CompanyItemProps) {
+function LocationItem({
+  id,
+  location,
+  company_id,
+  onRemoveLocation,
+}: LocationItemProps) {
+  const removeEvent = async () => {
+    try {
+      const { data } = await api.delete(`/locais/${id}`, {
+        headers: { company_id },
+      });
+      onRemoveLocation(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const preventRedirectionInButton = (e: any) => {
     const { target } = e;
     const { parentElement } = target;
@@ -19,24 +36,15 @@ export function CompanyItem({ company, id, removeCompany }: CompanyItemProps) {
     }
   };
 
-  const onRemoveCompany = async () => {
-    try {
-      const { data } = await api.delete(`/empresas/${id}`);
-      removeCompany(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   return (
     <li className={styles.item}>
-      <Link href={`/empresas/${id}`} passHref>
-        <a onClick={preventRedirectionInButton} href="replace">
-          <p>{company}</p>
+      <Link href={`/locais/${id}`} passHref>
+        <a onClick={preventRedirectionInButton} href="pass">
+          <p>{location}</p>
           <FiEdit2 className={styles.edit} width={18} />
           <button
             className={styles.buttonRed}
-            onClick={onRemoveCompany}
+            onClick={removeEvent}
             type="button"
           >
             <FiTrash width={18} color="white" />
@@ -46,3 +54,5 @@ export function CompanyItem({ company, id, removeCompany }: CompanyItemProps) {
     </li>
   );
 }
+
+export { LocationItem };

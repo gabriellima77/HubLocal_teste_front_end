@@ -18,9 +18,11 @@ export function setupAPIClient(ctx: ctxType = undefined) {
 
   const successEvent = (response: AxiosResponse) => response;
   const errorEvent = (error) => {
-    console.log(JSON.stringify(error, null, 2));
-    // if (typeof window !== "undefined") signOut();
-    return Promise.reject(new AuthTokenError());
+    if (error.status === 401) {
+      if (typeof window !== "undefined") signOut();
+      return Promise.reject(new AuthTokenError());
+    }
+    return Promise.reject(error);
   };
 
   api.interceptors.response.use(successEvent, errorEvent);

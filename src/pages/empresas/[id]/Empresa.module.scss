@@ -1,0 +1,40 @@
+.container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  .form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-self: center;
+    width: 100%;
+    max-width: 640px;
+  }
+
+  .locations-header {
+    color: var(--green-500);
+  }
+
+  .list {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    width: 80%;
+    max-width: 720px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    list-style: none;
+    color: white;
+
+    & li:nth-child(even) {
+      background-color: #0283fcea;
+    }
+
+    & li:nth-child(odd) {
+      background-color: #0283fc81;
+    }
+  }
+}
