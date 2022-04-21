@@ -4,6 +4,7 @@ import Head from "next/head";
 import Router from "next/router";
 import { useContext, useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import ReactModal from "react-modal";
 import * as yup from "yup";
 
 import { CreateLocationModal } from "../../../components/CreateLocationModal";
@@ -39,6 +40,8 @@ interface IFormData {
   cnpj: string;
   description: string;
 }
+
+ReactModal.setAppElement("#__next");
 
 const editCompanySchema = yup.object().shape({
   name: yup.string().required("Nome obrigatório!"),
@@ -114,7 +117,7 @@ export default function Empresa({ company, locations }: EmpresaProps) {
           />
           <Input
             error={errors.cnpj}
-            label="Cnpj"
+            label="CNPJ"
             type="text"
             {...register("cnpj")}
           />

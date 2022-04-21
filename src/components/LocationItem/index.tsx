@@ -2,7 +2,7 @@ import Link from "next/link";
 import { FiEdit2, FiTrash } from "react-icons/fi";
 
 import { api } from "../../services/apiClient";
-import styles from "./LocationItem.module.scss";
+import styles from "../../styles/common.module.scss";
 
 interface LocationItemProps {
   location: string;
@@ -28,13 +28,25 @@ function LocationItem({
     }
   };
 
+  const preventRedirectionInButton = (e: any) => {
+    const { target } = e;
+    const { parentElement } = target;
+    if (target.type === "button" || parentElement.type === "button") {
+      e.preventDefault();
+    }
+  };
+
   return (
     <li className={styles.item}>
       <Link href={`/locais/${id}`} passHref>
-        <a href="pass">
+        <a onClick={preventRedirectionInButton} href="pass">
           <p>{location}</p>
           <FiEdit2 className={styles.edit} width={18} />
-          <button onClick={removeEvent} type="button">
+          <button
+            className={styles.buttonRed}
+            onClick={removeEvent}
+            type="button"
+          >
             <FiTrash width={18} color="white" />
           </button>
         </a>

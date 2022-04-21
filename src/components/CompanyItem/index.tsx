@@ -2,7 +2,7 @@ import Link from "next/link";
 import { FiEdit2, FiTrash } from "react-icons/fi";
 
 import { api } from "../../services/apiClient";
-import styles from "./CompanyItem.module.scss";
+import styles from "../../styles/common.module.scss";
 
 interface CompanyItemProps {
   company: string;
@@ -34,7 +34,11 @@ export function CompanyItem({ company, id, removeCompany }: CompanyItemProps) {
         <a onClick={preventRedirectionInButton} href="replace">
           <p>{company}</p>
           <FiEdit2 className={styles.edit} width={18} />
-          <button onClick={onRemoveCompany} type="button">
+          <button
+            className={styles.buttonRed}
+            onClick={onRemoveCompany}
+            type="button"
+          >
             <FiTrash width={18} color="white" />
           </button>
         </a>
