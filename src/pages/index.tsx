@@ -27,6 +27,7 @@ const Home: NextPage = function () {
     register,
     handleSubmit,
     formState: { errors },
+    setError,
   } = useForm<IFormData>({
     resolver: yupResolver(signInFormSchema),
   });
@@ -34,7 +35,12 @@ const Home: NextPage = function () {
   const { signIn } = useContext(AuthContext);
 
   const onSubmit: SubmitHandler<IFormData> = async ({ email, password }) => {
-    await signIn({ email, password });
+    try {
+      await signIn({ email, password });
+    } catch (error: any) {
+      const { data } = error;
+      setError("email", { message: data.message, type: "validate" });
+    }
   };
 
   return (

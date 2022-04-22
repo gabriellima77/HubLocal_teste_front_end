@@ -38,7 +38,6 @@ export default function Tickets({ tickets, company }: TicketsProps) {
   const [currentTicket, setCurrentTicket] = useState<Ticket>(ticketsList[0]);
   const [isEditTicketModalOpen, setIsEditTicketModalOpen] = useState(false);
   const { user } = useContext(AuthContext);
-
   const onModalClose = () => {
     setIsEditTicketModalOpen(false);
   };
@@ -67,12 +66,14 @@ export default function Tickets({ tickets, company }: TicketsProps) {
           Tickets da empresa {company.name}
         </h3>
 
-        <EditTicketModal
-          isOpen={isEditTicketModalOpen}
-          onRequestClose={onModalClose}
-          ticket={currentTicket}
-          updateTickets={updateTickets}
-        />
+        {tickets.length > 0 ? (
+          <EditTicketModal
+            isOpen={isEditTicketModalOpen}
+            onRequestClose={onModalClose}
+            ticket={currentTicket}
+            updateTickets={updateTickets}
+          />
+        ) : null}
         <ul className={common.list}>
           {ticketsList.map((ticket) => (
             <TicketItem

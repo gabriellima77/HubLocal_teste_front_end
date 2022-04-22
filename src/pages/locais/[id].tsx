@@ -75,7 +75,13 @@ export default function Location({
   responsible,
 }: LocationProps) {
   const [isResponsibleModalOpen, setIsResponsibleModalOpen] = useState(false);
-  const [responsibleToEdit, setResponsibleToEdit] = useState<Responsible>();
+  const [responsibleToEdit, setResponsibleToEdit] = useState<Responsible>({
+    address: "",
+    city: "",
+    name: "",
+    phone: "",
+    state: "",
+  });
   const [responsibleList, setResponsibleList] =
     useState<Responsible[]>(responsible);
   const { user } = useContext(AuthContext);
@@ -94,19 +100,17 @@ export default function Location({
   };
 
   const onModalClose = () => {
-    setResponsibleToEdit(undefined);
+    setResponsibleToEdit({
+      address: "",
+      city: "",
+      name: "",
+      phone: "",
+      state: "",
+    });
     setIsResponsibleModalOpen(false);
   };
 
-  const {
-    control,
-    register,
-    handleSubmit,
-    formState,
-    reset,
-    setValue,
-    clearErrors,
-  } = methods;
+  const { register, handleSubmit, formState, setValue, clearErrors } = methods;
 
   const { errors, isSubmitting } = formState;
 
@@ -158,7 +162,7 @@ export default function Location({
 
   const onEdit = (id: string) => {
     const responsible = responsibleList.find((respo) => respo.id === id);
-    setResponsibleToEdit(responsible);
+    if (responsible) setResponsibleToEdit(responsible);
     onModalOpen();
   };
 
@@ -255,7 +259,12 @@ export default function Location({
           </button>
         </form>
         <h3 className={styles["location-header"]}>Responsáveis</h3>
-        <button onClick={onModalOpen} className={common.button} type="button">
+        <button
+          style={{ backgroundColor: "var(--green-500)" }}
+          onClick={onModalOpen}
+          className={common.button}
+          type="button"
+        >
           Adicionar Responsável
         </button>
         <ul className={styles.list}>

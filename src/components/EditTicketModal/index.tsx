@@ -61,7 +61,7 @@ export function EditTicketModal({
     if (error.type) return;
     setIsSubmitting(true);
     await api.put(
-      `/tickets/${ticket.id}`,
+      `/tickets/${ticket?.id}`,
       { will_solve: willSolve, status },
       {
         headers: {

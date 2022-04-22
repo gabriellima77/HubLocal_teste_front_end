@@ -1,6 +1,7 @@
 import { useFormContext } from "react-hook-form";
 import ReactModal from "react-modal";
 
+import common from "../../styles/common.module.scss";
 import { CepInput } from "../CepInput";
 import { Input } from "../Input";
 
@@ -15,11 +16,13 @@ interface AddressRequest {
 interface ResponsibleFormProps {
   locationIndex?: number;
   index: number;
+  removeResponsible(index: number): void;
 }
 
 export function ResponsibleForm({
   index,
   locationIndex,
+  removeResponsible,
 }: ResponsibleFormProps) {
   const { register, formState, setValue, clearErrors, getValues } =
     useFormContext();
@@ -86,6 +89,14 @@ export function ResponsibleForm({
         {...register(`${position}${index}.state`)}
         disabled
       />
+      <button
+        style={{ backgroundColor: "rgb(252, 80, 80)" }}
+        className={common.button}
+        onClick={() => removeResponsible(index)}
+        type="button"
+      >
+        Remover responsável
+      </button>
     </>
   );
 }

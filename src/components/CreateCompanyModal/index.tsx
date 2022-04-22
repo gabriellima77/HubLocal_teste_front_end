@@ -51,7 +51,7 @@ interface CreateResponsibleProps {
   };
 }
 
-const phoneRegex = /\({0,1}\d{2,}\){0,1}\d{4,}-{0,1}\d{4}/g;
+const phoneRegex = /^\({0,1}\d{2,}\){0,1}[ ]{0,1}\d{4,}-{0,1}\d{4}$/;
 export const responsibleSchema = yup.object().shape({
   name: yup.string().required("Nome obrigatório!"),
   phone: yup
@@ -73,7 +73,10 @@ export const locationSchema = yup.object().shape({
 
 const createCompanySchema = yup.object().shape({
   name: yup.string().required("Nome obrigatório!"),
-  cnpj: yup.string().required("Cnpj Obrigatório!"),
+  cnpj: yup
+    .string()
+    .required("Cnpj Obrigatório!")
+    .matches(/^[0-9]{14}$/, "CNPJ possui apenas números e tem 14 caracteres"),
   description: yup.string(),
   locations: yup.array().of(locationSchema),
 });
@@ -87,7 +90,8 @@ export function CreateCompanyModal({
     resolver: yupResolver(createCompanySchema),
   });
 
-  const { control, register, handleSubmit, formState, reset } = methods;
+  const { control, register, handleSubmit, formState, reset, setError } =
+    methods;
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -161,7 +165,16 @@ export function CreateCompanyModal({
       onAddCompany(newCompanies);
       reset();
       onRequestClose();
-    } catch (error) {
+    } catch (error: any) {
+      const { data } = error;
+      if (data) {
+        const isCNPJError = data.message.toLowerCase().includes("cnpj");
+        if (isCNPJError) {
+          setError("cnpj", { message: data.message, type: "validate" });
+        } else {
+          setError("name", { message: data.message, type: "validate" });
+        }
+      }
       console.log(error);
     }
   };
@@ -199,7 +212,7 @@ export function CreateCompanyModal({
           />
           <Input
             error={errors.cnpj}
-            label="Cnpj"
+            label="CNPJ"
             type="text"
             {...register("cnpj")}
           />

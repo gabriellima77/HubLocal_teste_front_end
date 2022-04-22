@@ -1,4 +1,5 @@
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import Modal from "react-modal";
 import * as yup from "yup";
@@ -25,7 +26,7 @@ interface Responsible {
 }
 
 interface CreateResponsibleModalProps {
-  responsible?: Responsible;
+  responsible: Responsible;
   companyId: string;
   locationId: string;
   isOpen: boolean;
@@ -34,7 +35,7 @@ interface CreateResponsibleModalProps {
   submitEvent(responsible: Responsible): Promise<void>;
 }
 
-const phoneRegex = /\({0,1}\d{2,}\){0,1}\d{4,}-{0,1}\d{4}/g;
+const phoneRegex = /^\({0,1}\d{2,}\){0,1}[ ]{0,1}\d{4,}-{0,1}\d{4}$/;
 export const responsibleSchema = yup.object().shape({
   name: yup.string().required("Nome obrigatório!"),
   phone: yup
@@ -57,6 +58,13 @@ function CreateResponsibleModal({
 }: CreateResponsibleModalProps) {
   const methods = useForm<Responsible>({
     resolver: yupResolver(responsibleSchema),
+    defaultValues: {
+      address: responsible.address,
+      city: responsible.city,
+      name: responsible.name,
+      phone: responsible.phone,
+      state: responsible.state,
+    },
   });
 
   const { register, handleSubmit, formState, reset, setValue, clearErrors } =
@@ -64,13 +72,14 @@ function CreateResponsibleModal({
 
   const { errors, isSubmitting } = formState;
 
-  if (responsible) {
-    setValue("address", responsible.address);
-    setValue("name", responsible.name);
-    setValue("city", responsible.city);
-    setValue("state", responsible.state);
-    setValue("phone", responsible.phone);
-  }
+  useEffect(() => {
+    const { address, city, name, phone, state } = responsible;
+    setValue("name", name);
+    setValue("address", address);
+    setValue("city", city);
+    setValue("phone", phone);
+    setValue("state", state);
+  }, [responsible]);
 
   const setAddress = ({ address, city, state }: AddresRequest) => {
     setValue("address", address);
@@ -108,6 +117,15 @@ function CreateResponsibleModal({
     reset();
     onAddResponsible(data);
   };
+
+  let buttonText = responsible.name
+    ? "Editar responsável"
+    : "Criar responsável";
+  if (isSubmitting) {
+    buttonText = responsible.name
+      ? "Editando responsável..."
+      : "Criando responsável...";
+  }
 
   return (
     <Modal
@@ -165,7 +183,7 @@ function CreateResponsibleModal({
           disabled
         />
         <button className={common.button} type="submit">
-          {isSubmitting ? "Criando responsável..." : "Criar responsável"}
+          {buttonText}
         </button>
       </form>
     </Modal>

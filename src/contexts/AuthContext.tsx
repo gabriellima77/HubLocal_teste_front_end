@@ -38,7 +38,7 @@ interface AuthProviderProps {
 let authChannel: BroadcastChannel;
 
 export function signOut(sendMessage = true) {
-  destroyCookie(undefined, "nextauth.token,", { path: "/" });
+  destroyCookie(undefined, "nextauth.token", { path: "/" });
   if (sendMessage) authChannel.postMessage("signOut");
   Router.push("/");
 }
@@ -78,56 +78,48 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, []);
 
   async function signUp({ email, password, name }: signUpCredentials) {
-    try {
-      const { data } = await api.post("/signup", {
-        email,
-        password,
-        name,
-      });
+    const { data } = await api.post("/signup", {
+      email,
+      password,
+      name,
+    });
 
-      const { token, user } = data;
-      setCookie(undefined, "nextauth.token", token, {
-        maxAge: 60 * 60 * 24 * 30, // 30 days
-        path: "/",
-      });
+    const { token, user } = data;
+    setCookie(undefined, "nextauth.token", token, {
+      maxAge: 60 * 60 * 24 * 30, // 30 days
+      path: "/",
+    });
 
-      api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    api.defaults.headers.common.Authorization = `Bearer ${token}`;
 
-      setUser({
-        email: user.email,
-        id: user.id,
-        name: user.name,
-      });
+    setUser({
+      email: user.email,
+      id: user.id,
+      name: user.name,
+    });
 
-      if (authChannel) authChannel.postMessage("signIn");
-      Router.push("/empresas");
-    } catch (error) {
-      console.log(error);
-    }
+    if (authChannel) authChannel.postMessage("signIn");
+    Router.push("/empresas");
   }
 
   async function signIn({ email, password }: signInCredentials) {
-    try {
-      const { data } = await api.post("/login", {
-        email,
-        password,
-      });
-      const { token, user } = data;
-      setCookie(undefined, "nextauth.token", token, {
-        maxAge: 60 * 60 * 24 * 30, // 30 days
-        path: "/",
-      });
-      api.defaults.headers.common.Authorization = `Bearer ${token}`;
-      setUser({
-        email,
-        id: user.id,
-        name: user.name,
-      });
-      if (authChannel) authChannel.postMessage("signIn");
-      Router.push("/empresas");
-    } catch (error) {
-      console.log(error);
-    }
+    const { data } = await api.post("/login", {
+      email,
+      password,
+    });
+    const { token, user } = data;
+    setCookie(undefined, "nextauth.token", token, {
+      maxAge: 60 * 60 * 24 * 30, // 30 days
+      path: "/",
+    });
+    api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    setUser({
+      email,
+      id: user.id,
+      name: user.name,
+    });
+    if (authChannel) authChannel.postMessage("signIn");
+    Router.push("/empresas");
   }
 
   const value = useMemo(

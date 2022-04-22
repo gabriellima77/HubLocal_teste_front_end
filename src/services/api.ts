@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import { GetServerSidePropsContext } from "next";
 import { parseCookies } from "nookies";
 
@@ -17,8 +17,8 @@ export function setupAPIClient(ctx: ctxType = undefined) {
   api.defaults.headers.common.Authorization = `Bearer ${cookies["nextauth.token"]}`;
 
   const successEvent = (response: AxiosResponse) => response;
-  const errorEvent = (error) => {
-    if (error.status === 401) {
+  const errorEvent = ({ response: error }: AxiosError) => {
+    if (error?.status === 401) {
       if (typeof window !== "undefined") signOut();
       return Promise.reject(new AuthTokenError());
     }

@@ -13,7 +13,9 @@ export function Header({ name, hasNavLink }: HeaderProps) {
   const { signOut } = useContext(AuthContext);
   return (
     <header className={styles.header}>
-      <div>Logo</div>
+      <div>
+        <h1 className={styles.logo}>ILocation</h1>
+      </div>
       <p>{name}</p>
       {hasNavLink ? (
         <div>

@@ -1,4 +1,5 @@
 import { yupResolver } from "@hookform/resolvers/yup";
+import { AxiosError, AxiosResponse } from "axios";
 import Head from "next/head";
 import Link from "next/link";
 import { useContext } from "react";
@@ -32,6 +33,7 @@ export default function Signup() {
     register,
     handleSubmit,
     formState: { errors },
+    setError,
   } = useForm<IFormData>({
     resolver: yupResolver(signUpFormSchema),
   });
@@ -45,9 +47,9 @@ export default function Signup() {
   }) => {
     try {
       await signUp({ email, name, password });
-    } catch (err: any) {
-      const { error } = err.response.data;
-      console.log(error);
+    } catch (error: any) {
+      const { data } = error;
+      setError("email", { message: data.message, type: "validate" });
     }
   };
 
@@ -57,7 +59,7 @@ export default function Signup() {
         <title>SignUp</title>
       </Head>
       <form className={styles.container} onSubmit={handleSubmit(onSubmit)}>
-        <h2>SignIn</h2>
+        <h2>SignUp</h2>
         <Input
           error={errors.email}
           label="E-mail"

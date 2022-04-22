@@ -81,12 +81,22 @@ export function LocationsForm({ removeLocation, index }: LocationsFormProps) {
         disabled
       />
 
-      <button type="button" onClick={addResponsible}>
-        Criar Responsável
-      </button>
       {fields.map((field, i) => (
-        <ResponsibleForm key={field.id} index={i} locationIndex={index} />
+        <ResponsibleForm
+          key={field.id}
+          index={i}
+          locationIndex={index}
+          removeResponsible={removeResponsible}
+        />
       ))}
+      <button
+        style={{ backgroundColor: "var(--green-500)" }}
+        className={common.button}
+        type="button"
+        onClick={addResponsible}
+      >
+        Adicionar Responsável
+      </button>
       <button
         className={`${common.button} ${styles.buttonRed}`}
         type="button"

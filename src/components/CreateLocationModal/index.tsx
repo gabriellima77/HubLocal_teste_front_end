@@ -47,7 +47,7 @@ interface CreateLocationModalProps {
   onAddLocation(locations: any): void;
 }
 
-const phoneRegex = /\({0,1}\d{2,}\){0,1}\d{4,}-{0,1}\d{4}/g;
+const phoneRegex = /^\({0,1}\d{2,}\){0,1}[ ]{0,1}\d{4,}-{0,1}\d{4}$/;
 export const responsibleSchema = yup.object().shape({
   name: yup.string().required("Nome obrigatório!"),
   phone: yup
@@ -211,12 +211,21 @@ function CreateLocationModal({
             disabled
           />
 
-          <button type="button" onClick={addResponsible}>
-            Criar Responsável
-          </button>
           {fields.map((field, index) => (
-            <ResponsibleForm key={field.id} index={index} />
+            <ResponsibleForm
+              key={field.id}
+              index={index}
+              removeResponsible={removeResponsible}
+            />
           ))}
+          <button
+            style={{ backgroundColor: "var(--green-500)" }}
+            className={common.button}
+            type="button"
+            onClick={addResponsible}
+          >
+            Adicionar Responsável
+          </button>
           <button className={common.button} type="submit">
             {isSubmitting ? "Criando Local" : "Criar Local"}
           </button>
