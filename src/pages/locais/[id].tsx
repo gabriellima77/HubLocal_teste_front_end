@@ -19,6 +19,11 @@ import { getCompanyId } from "../../utils/CompanyCookies";
 import { withSSRAuth } from "../../utils/withSSRAuth";
 import styles from "./Local.module.scss";
 
+interface Ticket {
+  id: string;
+  status: "pendente" | "progresso" | "concluido";
+}
+
 interface Location {
   id: string;
   name: string;
@@ -166,19 +171,31 @@ export default function Location({
       });
 
       // update last Ticket or Create new Ticket
-      await api.post(
-        "/tickets",
-        {
-          created_by: user?.name,
-          will_solve: user?.name,
-        },
-        {
-          headers: {
-            company_id: companyId,
-            location_id: location.id,
-          },
-        }
+      const headers = {
+        company_id: companyId,
+        location_id: location.id,
+      };
+      const { data: tickets } = await api.get("/tickets/local", {
+        headers,
+      });
+      const hasTicketOpen = tickets.find(
+        (ticket: Ticket) => ticket.status !== "concluido"
       );
+      if (hasTicketOpen) {
+        const { id } = hasTicketOpen;
+        await api.put(`/tickets/${id}`, { status: "progresso" }, { headers });
+      } else {
+        await api.post(
+          "/tickets",
+          {
+            created_by: user?.name,
+            will_solve: user?.name,
+          },
+          {
+            headers,
+          }
+        );
+      }
     } catch (error) {
       console.log(error);
     }
