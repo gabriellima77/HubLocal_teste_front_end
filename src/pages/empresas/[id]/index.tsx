@@ -141,7 +141,7 @@ export default function Empresa({ company, locations }: EmpresaProps) {
           Adicionar Local
         </button>
         <h3 className={styles["locations-header"]}>Locais</h3>
-        <ul className={styles.list}>
+        <ul className={common.list}>
           {locationsList.map((location) => (
             <LocationItem
               key={location.id}

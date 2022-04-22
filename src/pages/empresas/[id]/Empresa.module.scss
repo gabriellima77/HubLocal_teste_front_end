@@ -18,23 +18,4 @@
     color: var(--green-500);
   }
 
-  .list {
-    margin-top: 2rem;
-    margin-bottom: 2rem;
-    width: 80%;
-    max-width: 720px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    list-style: none;
-    color: white;
-
-    & li:nth-child(even) {
-      background-color: #0283fcea;
-    }
-
-    & li:nth-child(odd) {
-      background-color: #0283fc81;
-    }
-  }
 }
