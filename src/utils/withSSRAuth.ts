@@ -12,7 +12,7 @@ export function withSSRAuth<P>(fn: GetServerSideProps<P>) {
   return async (
     context: GetServerSidePropsContext
   ): Promise<GetServerSidePropsResult<P>> => {
-    const cookies = parseCookies(context);
+    const cookies = parseCookies(context, { path: "/" });
     const token = cookies["nextauth.token"];
     if (!token) {
       return {
@@ -27,7 +27,7 @@ export function withSSRAuth<P>(fn: GetServerSideProps<P>) {
       return await fn(context);
     } catch (err) {
       if (err instanceof AuthTokenError) {
-        destroyCookie(context, "nextauth.token");
+        destroyCookie(context, "nextauth.token", { path: "/" });
 
         return {
           redirect: {

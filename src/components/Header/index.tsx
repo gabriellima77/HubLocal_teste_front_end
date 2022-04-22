@@ -16,9 +16,14 @@ export function Header({ name, hasNavLink }: HeaderProps) {
       <div>Logo</div>
       <p>{name}</p>
       {hasNavLink ? (
-        <Link href="/empresas" passHref>
-          <a href="pass">Empresas</a>
-        </Link>
+        <div>
+          <Link href="/empresas" passHref>
+            <a href="pass">Empresas</a>
+          </Link>
+          <Link href="/tickets" passHref>
+            <a href="pass">Tickets</a>
+          </Link>
+        </div>
       ) : null}
       <button className={styles.button} type="button" onClick={() => signOut()}>
         Logout

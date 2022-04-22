@@ -2,23 +2,24 @@ import {
   GetServerSideProps,
   GetServerSidePropsContext,
   GetServerSidePropsResult,
-} from 'next';
-import { parseCookies } from 'nookies';
+} from "next";
+import { parseCookies } from "nookies";
 
 export function withSSRGuest<P>(fn: GetServerSideProps<P>) {
   return async (
     context: GetServerSidePropsContext
   ): Promise<GetServerSidePropsResult<P>> => {
-    const cookies = parseCookies(context);
-    const token = cookies['nextauth.token'];
+    const cookies = parseCookies(context, { path: "/" });
+    const token = cookies["nextauth.token"];
     if (token) {
       return {
         redirect: {
-          destination: '/empresas',
+          destination: "/empresas",
           permanent: false,
         },
       };
     }
-    return await fn(context);
+    const result = await fn(context);
+    return result;
   };
 }

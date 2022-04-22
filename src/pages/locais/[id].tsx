@@ -2,7 +2,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import { useContext, useState } from "react";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import ReactModal from "react-modal";
 import * as yup from "yup";
 
@@ -18,6 +18,11 @@ import common from "../../styles/common.module.scss";
 import { getCompanyId } from "../../utils/CompanyCookies";
 import { withSSRAuth } from "../../utils/withSSRAuth";
 import styles from "./Local.module.scss";
+
+interface Ticket {
+  id: string;
+  status: "pendente" | "progresso" | "concluido";
+}
 
 interface Location {
   id: string;
@@ -157,6 +162,45 @@ export default function Location({
     onModalOpen();
   };
 
+  const onSubmit: SubmitHandler<IFormData> = async (data) => {
+    try {
+      await api.put(`/locais/${location.id}`, data, {
+        headers: {
+          company_id: companyId,
+        },
+      });
+
+      // update last Ticket or Create new Ticket
+      const headers = {
+        company_id: companyId,
+        location_id: location.id,
+      };
+      const { data: tickets } = await api.get("/tickets/local", {
+        headers,
+      });
+      const hasTicketOpen = tickets.find(
+        (ticket: Ticket) => ticket.status !== "concluido"
+      );
+      if (hasTicketOpen) {
+        const { id } = hasTicketOpen;
+        await api.put(`/tickets/${id}`, { status: "progresso" }, { headers });
+      } else {
+        await api.post(
+          "/tickets",
+          {
+            created_by: user?.name,
+            will_solve: user?.name,
+          },
+          {
+            headers,
+          }
+        );
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       <Head>
@@ -174,7 +218,10 @@ export default function Location({
       />
       <main className={styles.container}>
         <h3 className={styles["location-header"]}>Editar {location.name}</h3>
-        <form className={styles["form-container"]}>
+        <form
+          className={styles["form-container"]}
+          onSubmit={handleSubmit(onSubmit)}
+        >
           <Input
             label="Nome do Local"
             type="text"

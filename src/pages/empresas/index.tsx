@@ -8,6 +8,7 @@ import { CreateCompanyModal } from "../../components/CreateCompanyModal";
 import { Header } from "../../components/Header";
 import { AuthContext } from "../../contexts/AuthContext";
 import { setupAPIClient } from "../../services/api";
+import common from "../../styles/common.module.scss";
 import { removeCompanyCookies } from "../../utils/CompanyCookies";
 import { withSSRAuth } from "../../utils/withSSRAuth";
 import styles from "./Empresas.module.scss";
@@ -63,7 +64,7 @@ export default function Empresas({ companies }: EmpresasProps) {
           onRequestClose={closeModal}
           onAddCompany={addCompany}
         />
-        <ul className={styles.list}>
+        <ul className={common.list}>
           {companiesList.map((company) => (
             <CompanyItem
               key={company.id}

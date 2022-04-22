@@ -38,7 +38,7 @@ interface AuthProviderProps {
 let authChannel: BroadcastChannel;
 
 export function signOut(sendMessage = true) {
-  destroyCookie(undefined, "nextauth.token");
+  destroyCookie(undefined, "nextauth.token,", { path: "/" });
   if (sendMessage) authChannel.postMessage("signOut");
   Router.push("/");
 }
